@@ -1,0 +1,1694 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>VIC HSIEH — VISUAL DESIGNER</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Noto+Serif+TC:wght@300;400&family=Noto+Sans+TC:wght@200;300;400&family=DM+Sans:opsz,wght@9..40,200;9..40,300&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>
+
+  <style>
+    /* ═══════════════════════════════════
+       TOKENS
+    ═══════════════════════════════════ */
+    :root {
+      --white: #ffffff;
+      --off: #f7f5f2;
+      --ink: #111110;
+      --mid: #6b6860;
+      --light: #b8b5b0;
+      --gold: #b8965a;
+      --gold-t: rgba(184, 150, 90, .2);
+
+      /* 大字：英文 Playfair Display + 中文 Noto Serif TC */
+      --serif: 'Playfair Display', 'Noto Serif TC', Georgia, serif;
+      /* 小字：英文 DM Sans + 中文 Noto Sans TC */
+      --sans: 'DM Sans', 'Noto Sans TC', system-ui, sans-serif;
+
+      --max: 1160px;
+      --gutter: clamp(32px, 6vw, 100px);
+      --sec: clamp(100px, 12vw, 180px);
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+    }
+
+    body {
+      background: var(--white);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-weight: 200;
+      line-height: 1.6;
+      overflow-x: hidden;
+      cursor: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Layout shell ── */
+    .wrap {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 var(--gutter);
+    }
+
+    /* ═══════════════════════════════════
+       CURSOR
+    ═══════════════════════════════════ */
+    #cx {
+      position: fixed;
+      pointer-events: none;
+      z-index: 9000;
+      width: 5px;
+      height: 5px;
+      background: var(--gold);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    /* ═══════════════════════════════════
+       NAV  — IMAYO style: ultra-thin, white bg, spaced caps
+    ═══════════════════════════════════ */
+    nav {
+      position: fixed;
+      inset: 0 0 auto;
+      z-index: 800;
+      height: 80px;
+      background: rgba(255, 255, 255, .96);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(0, 0, 0, .06);
+      transition: box-shadow .4s;
+    }
+
+    nav.scrolled {
+      box-shadow: 0 1px 24px rgba(0, 0, 0, .06);
+    }
+
+    .nav-inner {
+      max-width: var(--max);
+      height: 100%;
+      margin: 0 auto;
+      padding: 0 var(--gutter);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 100;
+      letter-spacing: .38em;
+      text-transform: uppercase;
+      color: var(--ink);
+      text-decoration: none;
+    }
+
+    .nav-logo span {
+      color: var(--gold);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 40px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 11px;
+      font-weight: 300;
+      letter-spacing: .28em;
+      text-transform: uppercase;
+      color: var(--mid);
+      text-decoration: none;
+      transition: color .3s;
+    }
+
+    .nav-links a:hover {
+      color: var(--ink);
+    }
+
+    .nav-avail {
+      font-size: 12px;
+      font-weight: 200;
+      letter-spacing: .22em;
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-avail::before {
+      content: '';
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--gold);
+      animation: blink 2.5s infinite;
+    }
+
+    @keyframes blink {
+
+      0%,
+      100% {
+        opacity: 1
+      }
+
+      50% {
+        opacity: .2
+      }
+    }
+
+    /* ═══════════════════════════════════
+       HERO  — full-bleed image, text bottom-left, stagger reveal
+    ═══════════════════════════════════ */
+    #hero {
+      height: 100vh;
+      min-height: 640px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-img {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    .hero-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 30%;
+      filter: brightness(.85);
+    }
+
+
+
+    /* top gradient for nav legibility */
+    .hero-img::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      /*background: linear-gradient(to bottom,
+          rgba(0, 0, 0, .28) 0%,
+          transparent 40%,
+          rgba(0, 0, 0, .55) 100%);*/
+    }
+
+    .hero-body {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 0 var(--gutter) clamp(52px, 7vh, 96px);
+      max-width: calc(var(--max) + var(--gutter)*2);
+      margin: 0 auto;
+      left: 0;
+      right: 0;
+    }
+
+    .hero-eyebrow {
+      font-family: var(--sans);
+      font-size: 12px;
+      font-weight: 200;
+      letter-spacing: .4em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 1);
+      margin-bottom: 20px;
+      opacity: 0;
+      animation: fadeUp .8s .2s forwards;
+    }
+
+    .hero-title {
+      font-family: var(--serif);
+      font-size: clamp(22px, 3.5vw, 48px);
+      font-weight: 300;
+      line-height: 1.3;
+      color: #fff;
+      letter-spacing: .01em;
+      margin-bottom: 36px;
+      opacity: 0;
+      animation: fadeUp 1s .4s forwards;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      color: rgba(255, 255, 255, .75);
+    }
+
+    .hero-line {
+      width: 48px;
+      height: 1px;
+      background: var(--gold);
+      margin-bottom: 28px;
+      opacity: 0;
+      animation: scaleX .8s .6s forwards;
+      transform-origin: left;
+    }
+
+    @keyframes scaleX {
+      from {
+        transform: scaleX(0);
+        opacity: 0
+      }
+
+      to {
+        transform: scaleX(1);
+        opacity: 1
+      }
+    }
+
+    .hero-sub {
+      font-size: 11px;
+      font-weight: 200;
+      letter-spacing: .14em;
+      color: rgba(255, 255, 255, 1);
+      max-width: 420px;
+      line-height: 2;
+      opacity: 0;
+      animation: fadeUp .8s .75s forwards;
+    }
+
+    /* scroll indicator */
+    .hero-scroll {
+      position: absolute;
+      bottom: 36px;
+      right: var(--gutter);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      opacity: 0;
+      animation: fadeUp .6s 1.1s forwards;
+    }
+
+    .hero-scroll span {
+      font-size: 8px;
+      letter-spacing: .35em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, .4);
+      writing-mode: vertical-rl;
+    }
+
+    .hero-scroll-bar {
+      width: 1px;
+      height: 56px;
+      background: linear-gradient(to bottom, var(--gold), transparent);
+      animation: scrollbar 2.2s 1.5s ease-in-out infinite;
+    }
+
+    @keyframes scrollbar {
+      0% {
+        transform: scaleY(0);
+        transform-origin: top;
+        opacity: 1
+      }
+
+      49% {
+        transform: scaleY(1);
+        transform-origin: top;
+        opacity: 1
+      }
+
+      50% {
+        transform: scaleY(1);
+        transform-origin: bottom;
+        opacity: 1
+      }
+
+      100% {
+        transform: scaleY(0);
+        transform-origin: bottom;
+        opacity: 0
+      }
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(18px)
+      }
+
+      to {
+        opacity: 1;
+        transform: none
+      }
+    }
+
+    /* ═══════════════════════════════════
+       SECTION SHELL
+    ═══════════════════════════════════ */
+    .section {
+      padding: var(--sec) var(--gutter);
+    }
+
+    .section-inner {
+      max-width: var(--max);
+      margin: 0 auto;
+    }
+
+    /* eyebrow label — hairline rule left */
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-size: 12px;
+      font-weight: 200;
+      letter-spacing: .38em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 48px;
+    }
+
+    .eyebrow::before {
+      content: '';
+      flex-shrink: 0;
+      width: 32px;
+      height: 1px;
+      background: var(--gold);
+    }
+
+    /* large display heading */
+    .display {
+      font-family: var(--serif);
+      font-size: clamp(32px, 4.5vw, 64px);
+      font-weight: 300;
+      line-height: 1.18;
+      letter-spacing: .01em;
+    }
+
+    .display em {
+      font-style: italic;
+    }
+
+    /* reveal helpers */
+    .rv {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity .9s ease, transform .9s ease;
+    }
+
+    .rv.in {
+      opacity: 1;
+      transform: none;
+    }
+
+    .rv-l {
+      opacity: 0;
+      transform: translateX(-32px);
+      transition: opacity .9s ease, transform .9s ease;
+    }
+
+    .rv-l.in {
+      opacity: 1;
+      transform: none;
+    }
+
+    .rv-r {
+      opacity: 0;
+      transform: translateX(32px);
+      transition: opacity .9s ease, transform .9s ease;
+    }
+
+    .rv-r.in {
+      opacity: 1;
+      transform: none;
+    }
+
+    .d1 {
+      transition-delay: .1s
+    }
+
+    .d2 {
+      transition-delay: .2s
+    }
+
+    .d3 {
+      transition-delay: .3s
+    }
+
+    .d4 {
+      transition-delay: .4s
+    }
+
+    /* ═══════════════════════════════════
+       ABOUT / STORY — left text, right timeline, white bg
+    ═══════════════════════════════════ */
+    #story {
+      background: var(--white);
+    }
+
+    .story-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(48px, 8vw, 120px);
+      align-items: start;
+    }
+
+    .story-prose {
+      padding-top: 8px;
+    }
+
+    .story-prose p {
+      font-family: var(--serif);
+      font-size: clamp(15px, 1.3vw, 18px);
+      font-weight: 300;
+      line-height: 2.1;
+      color: #3a3835;
+      margin-bottom: 28px;
+      letter-spacing: .02em;
+    }
+
+    .story-prose p strong {
+      font-weight: 400;
+      color: var(--ink);
+    }
+
+    .story-prose p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* timeline */
+    .timeline {
+      list-style: none;
+      margin-top: 4px;
+    }
+
+    .tl-item {
+      display: grid;
+      grid-template-columns: 100px 1fr;
+      gap: 24px;
+      padding: 28px 0;
+      border-bottom: 1px solid rgba(0, 0, 0, .07);
+      transition: padding-left .3s;
+    }
+
+    .tl-item:first-child {
+      border-top: 1px solid rgba(0, 0, 0, .07);
+    }
+
+    .tl-item:hover {
+      padding-left: 6px;
+    }
+
+    .tl-yr {
+      font-family: var(--serif);
+      font-size: 15px;
+      font-weight: 300;
+      color: var(--gold);
+      letter-spacing: .08em;
+      padding-top: 2px;
+    }
+
+    .tl-co {
+      font-size: 12px;
+      font-weight: 300;
+      letter-spacing: .24em;
+      text-transform: uppercase;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+
+    .tl-role {
+      font-size: 13px;
+      font-weight: 200;
+      line-height: 1.8;
+      color: var(--mid);
+    }
+
+    .tl-chip {
+      display: inline-block;
+      margin-top: 10px;
+      font-size: 8px;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      border: 1px solid var(--gold-t);
+      padding: 3px 10px;
+    }
+
+    /* ═══════════════════════════════════
+       WORKS — dark section, mosaic grid
+    ═══════════════════════════════════ */
+    #works {
+      background: var(--ink);
+    }
+
+    #works .eyebrow {
+      color: rgba(184, 150, 90, .8);
+    }
+
+    #works .eyebrow::before {
+      background: rgba(184, 150, 90, .8);
+    }
+
+    #works .display {
+      color: #f0ebe3;
+    }
+
+    .works-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: end;
+      margin-bottom: 64px;
+    }
+
+    .works-note {
+      font-size: 15px;
+      font-weight: 200;
+      line-height: 2;
+      color: rgba(240, 235, 227, 1);
+      padding-left: 24px;
+      border-left: 1px solid rgba(184, 150, 90, 1);
+    }
+
+    /* ── Waterfall: 3-column flex, zero gap ── */
+    .mosaic {
+      display: flex;
+      align-items: flex-start;
+      gap: 0;
+    }
+
+    .mosaic-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .mc {
+      position: relative;
+      overflow: hidden;
+      cursor: none;
+      width: 100%;
+      display: block;
+      flex-shrink: 0;
+    }
+
+    /* card image */
+    .mc-bg {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      background: #181816;
+    }
+
+    .mc-bg img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      object-position: center;
+      filter: brightness(.78) saturate(.82);
+      transition: transform 1s cubic-bezier(.25, .46, .45, .94), filter .6s;
+    }
+
+    .mc:hover .mc-bg img {
+      transform: scale(1.06);
+      filter: brightness(.55) saturate(1.08);
+    }
+
+    /* link wrapper */
+    .mc-trigger {
+      display: block;
+      position: absolute;
+      inset: 0;
+      text-decoration: none;
+    }
+
+    /* info overlay */
+    /* ── Card info: IMAYO style — centred, always visible ── */
+    .mc-info {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 32px;
+      background: rgba(0, 0, 0, 0);
+      transition: background .5s;
+      pointer-events: none;
+    }
+
+    .mc:hover .mc-info {
+      background: rgba(0, 0, 0, .18);
+    }
+
+    .mc-cat {
+      position: absolute;
+      top: 20px;
+      left: 24px;
+      font-size: 12px;
+      letter-spacing: .28em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, .6);
+      font-weight: 300;
+      font-family: 'DM Sans', 'Noto Sans TC', sans-serif;
+    }
+
+    .mc-name {
+      font-family: 'Playfair Display', 'Noto Serif TC', Georgia, serif;
+      font-size: clamp(20px, 2.8vw, 44px);
+      font-weight: 400;
+      font-style: italic;
+      color: #fff;
+      line-height: 1.2;
+      letter-spacing: .04em;
+      text-shadow: 0 2px 32px rgba(0, 0, 0, .4);
+    }
+
+    .mc-sub {
+      font-family: 'DM Sans', 'Noto Sans TC', sans-serif;
+      font-size: 12px;
+      font-weight: 200;
+      letter-spacing: .26em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, .45);
+      margin-top: 10px;
+    }
+
+    .mc-zoom {
+      position: absolute;
+      bottom: 20px;
+      right: 24px;
+      font-size: 8px;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, .0);
+      font-family: 'DM Sans', 'Noto Sans TC', sans-serif;
+      font-weight: 200;
+      transition: color .4s;
+    }
+
+    .mc:hover .mc-zoom {
+      color: rgba(255, 255, 255, .5);
+    }
+
+    /* ═══════════════════════════════════
+       METHOD — off-white, 3-col cards
+    ═══════════════════════════════════ */
+    #method {
+      background: var(--off);
+    }
+
+    .method-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: rgba(0, 0, 0, .08);
+      border: 1px solid rgba(0, 0, 0, .08);
+      margin-top: 64px;
+    }
+
+    .mcard {
+      background: var(--off);
+      padding: 48px 36px 44px;
+      transition: background .4s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .mcard::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: var(--gold);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform .45s ease;
+    }
+
+    .mcard:hover::after {
+      transform: scaleX(1);
+    }
+
+    .mcard:hover {
+      background: var(--white);
+    }
+
+    .mc-num {
+      font-family: var(--serif);
+      font-size: 52px;
+      font-weight: 300;
+      color: rgba(0, 0, 0, .07);
+      line-height: 1;
+      margin-bottom: 24px;
+      transition: color .4s;
+    }
+
+    .mcard:hover .mc-num {
+      color: rgba(184, 150, 90, .15);
+    }
+
+    .mc-head {
+      font-size: 12px;
+      font-weight: 300;
+      letter-spacing: .24em;
+      text-transform: uppercase;
+      color: var(--ink);
+      margin-bottom: 16px;
+    }
+
+    .mc-body {
+      font-family: var(--serif);
+      font-size: 14px;
+      font-weight: 300;
+      line-height: 2.1;
+      color: var(--mid);
+      letter-spacing: .02em;
+    }
+
+    /* ═══════════════════════════════════
+       SKILLS — white, two columns
+    ═══════════════════════════════════ */
+    #skills {
+      background: var(--white);
+    }
+
+    .skills-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 56px;
+    }
+
+    .sg-label {
+      font-size: 12px;
+      font-weight: 200;
+      letter-spacing: .3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 20px;
+    }
+
+    .sg-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+
+    .sg-tags:last-child {
+      margin-bottom: 0;
+    }
+
+    .sg-tag {
+      font-size: 10px;
+      font-weight: 200;
+      letter-spacing: .1em;
+      border: 1px solid rgba(0, 0, 0, .12);
+      padding: 7px 16px;
+      color: var(--mid);
+      transition: border-color .3s, color .3s, background .3s;
+    }
+
+    .sg-tag:hover {
+      border-color: var(--gold);
+      color: var(--ink);
+    }
+
+    .sg-tag.hi {
+      border-color: rgba(184, 150, 90, .4);
+      color: var(--ink);
+    }
+
+    /* ═══════════════════════════════════
+       EVENT — full-bleed section, off-white
+    ═══════════════════════════════════ */
+    #event {
+      background: var(--off);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .event-deco {
+      position: absolute;
+      right: -6%;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 40vw;
+      height: 40vw;
+      border-radius: 50%;
+      border: 1px solid rgba(0, 0, 0, .05);
+      pointer-events: none;
+    }
+
+    .event-deco::after {
+      content: '';
+      position: absolute;
+      inset: 14%;
+      border-radius: 50%;
+      border: 1px solid rgba(0, 0, 0, .05);
+    }
+
+    .event-title {
+      font-family: var(--serif);
+      font-size: clamp(40px, 6.5vw, 88px);
+      font-weight: 300;
+      line-height: .98;
+      letter-spacing: .01em;
+      margin-bottom: 36px;
+      max-width: 600px;
+    }
+
+    .event-title em {
+      font-style: italic;
+      color: var(--gold);
+    }
+
+    .event-desc {
+      font-family: var(--serif);
+      font-size: clamp(14px, 1.2vw, 17px);
+      font-weight: 300;
+      line-height: 2.1;
+      color: var(--mid);
+      max-width: 480px;
+      margin-bottom: 44px;
+    }
+
+    .event-row {
+      display: flex;
+      gap: 52px;
+      flex-wrap: wrap;
+      margin-bottom: 52px;
+    }
+
+    .ev-key {
+      font-size: 8px;
+      font-weight: 200;
+      letter-spacing: .3em;
+      text-transform: uppercase;
+      color: var(--light);
+      margin-bottom: 6px;
+    }
+
+    .ev-val {
+      font-family: var(--serif);
+      font-size: 17px;
+      font-weight: 300;
+      color: var(--ink);
+    }
+
+    .btn-ink {
+      display: inline-block;
+      background: var(--ink);
+      color: #fff;
+      padding: 15px 44px;
+      font-size: 12px;
+      font-weight: 200;
+      letter-spacing: .28em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border: 1px solid var(--ink);
+      transition: background .35s, color .35s;
+      cursor: none;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-ink::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--gold);
+      transform: translateX(-101%);
+      transition: transform .4s cubic-bezier(.25, .46, .45, .94);
+    }
+
+    .btn-ink:hover::after {
+      transform: none;
+    }
+
+    .btn-ink span {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ═══════════════════════════════════
+       CONTACT — dark
+    ═══════════════════════════════════ */
+    #contact {
+      background: var(--ink);
+    }
+
+    #contact .eyebrow {
+      color: rgba(184, 150, 90, .8);
+    }
+
+    #contact .eyebrow::before {
+      background: rgba(184, 150, 90, .8);
+    }
+
+    #contact .display {
+      color: #f0ebe3;
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+    }
+
+    .contact-prose {
+      font-family: var(--serif);
+      font-size: 15px;
+      font-weight: 300;
+      line-height: 2.1;
+      color: rgba(240, 235, 227, .45);
+      margin-bottom: 32px;
+      letter-spacing: .02em;
+    }
+
+    .contact-email {
+      font-family: var(--serif);
+      font-size: clamp(16px, 1.8vw, 22px);
+      font-weight: 300;
+      color: #f0ebe3;
+      text-decoration: none;
+      letter-spacing: .04em;
+      border-bottom: 1px solid rgba(184, 150, 90, .4);
+      padding-bottom: 3px;
+      display: inline-block;
+      transition: color .3s, border-color .3s;
+    }
+
+    .contact-email:hover {
+      color: var(--gold);
+      border-color: var(--gold);
+    }
+
+    /* form */
+    .form-f {
+      margin-bottom: 32px;
+      position: relative;
+    }
+
+    .form-f input,
+    .form-f textarea {
+      width: 100%;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid rgba(240, 235, 227, .12);
+      color: #f0ebe3;
+      font-family: var(--sans);
+      font-weight: 200;
+      font-size: 13px;
+      letter-spacing: .04em;
+      padding: 14px 0;
+      outline: none;
+      cursor: none;
+      transition: border-color .3s;
+    }
+
+    .form-f textarea {
+      resize: none;
+      height: 90px;
+    }
+
+    .form-f input::placeholder,
+    .form-f textarea::placeholder {
+      color: transparent;
+    }
+
+    .form-f input:focus,
+    .form-f textarea:focus {
+      border-bottom-color: var(--gold);
+    }
+
+    .form-f label {
+      position: absolute;
+      top: 14px;
+      left: 0;
+      font-size: 8px;
+      font-weight: 200;
+      letter-spacing: .28em;
+      text-transform: uppercase;
+      color: rgba(240, 235, 227, .3);
+      pointer-events: none;
+      transition: top .22s, font-size .22s, color .22s;
+    }
+
+    .form-f input:focus+label,
+    .form-f input:not(:placeholder-shown)+label,
+    .form-f textarea:focus+label,
+    .form-f textarea:not(:placeholder-shown)+label {
+      top: -14px;
+      font-size: 7px;
+      color: var(--gold);
+    }
+
+    .btn-send {
+      background: transparent;
+      color: rgba(240, 235, 227, .5);
+      border: 1px solid rgba(240, 235, 227, .15);
+      padding: 14px 40px;
+      font-family: var(--sans);
+      font-weight: 200;
+      font-size: 12px;
+      letter-spacing: .26em;
+      text-transform: uppercase;
+      cursor: none;
+      transition: border-color .3s, color .3s;
+    }
+
+    .btn-send:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    /* ═══════════════════════════════════
+       FOOTER
+    ═══════════════════════════════════ */
+    footer {
+      background: var(--ink);
+      padding: 32px var(--gutter);
+      border-top: 1px solid rgba(255, 255, 255, .07);
+    }
+
+    .footer-inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-copy {
+      font-size: 12px;
+      font-weight: 200;
+      letter-spacing: .16em;
+      color: rgba(240, 235, 227, .25);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 28px;
+    }
+
+    .footer-links a {
+      font-size: 12px;
+      font-weight: 200;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: rgba(240, 235, 227, .25);
+      text-decoration: none;
+      transition: color .3s;
+    }
+
+    .footer-links a:hover {
+      color: var(--gold);
+    }
+
+    /* ═══════════════════════════════════
+       GLIGHTBOX THEME
+    ═══════════════════════════════════ */
+    .glightbox-clean .gslide-description {
+      background: rgba(17, 17, 16, .95);
+      backdrop-filter: blur(16px);
+    }
+
+    .glightbox-clean .gdesc-inner {
+      padding: 22px 32px;
+    }
+
+    .glightbox-clean .gslide-title {
+      font-family: 'Cormorant', serif;
+      font-size: 19px;
+      font-weight: 300;
+      letter-spacing: .04em;
+      color: #f0ebe3;
+      margin-bottom: 4px;
+    }
+
+    .glightbox-clean .gslide-desc {
+      font-size: 12px;
+      letter-spacing: .24em;
+      text-transform: uppercase;
+      color: rgba(184, 150, 90, .75);
+    }
+
+    .glightbox-clean .gnext,
+    .glightbox-clean .gprev {
+      background: rgba(17, 17, 16, .65);
+      border: 1px solid rgba(255, 255, 255, .1);
+      border-radius: 0;
+      width: 52px;
+      height: 52px;
+      transition: background .25s, border-color .25s;
+    }
+
+    .glightbox-clean .gnext:hover,
+    .glightbox-clean .gprev:hover {
+      background: rgba(184, 150, 90, .2);
+      border-color: var(--gold);
+    }
+
+    .glightbox-clean .gclose {
+      background: rgba(17, 17, 16, .65);
+      border: 1px solid rgba(255, 255, 255, .1);
+      border-radius: 0;
+      width: 44px;
+      height: 44px;
+      transition: background .25s;
+    }
+
+    .glightbox-clean .gclose:hover {
+      background: rgba(184, 150, 90, .2);
+    }
+
+    .glightbox-container {
+      cursor: auto !important;
+    }
+
+    .glightbox-container * {
+      cursor: auto !important;
+    }
+
+    /* ═══════════════════════════════════
+       RESPONSIVE
+    ═══════════════════════════════════ */
+    @media (max-width: 900px) {
+      :root {
+        --gutter: 28px;
+        --sec: 80px;
+      }
+
+      .nav-avail,
+      .nav-links li:nth-child(n+4) {
+        display: none;
+      }
+
+      .story-grid {
+        grid-template-columns: 1fr;
+        gap: 48px;
+      }
+
+      .works-header {
+        grid-template-columns: 1fr;
+        gap: 28px;
+      }
+
+      .mosaic {
+        flex-direction: column;
+      }
+
+      .mosaic-col {
+        flex: none;
+        width: 100%;
+      }
+
+      .mc {
+        aspect-ratio: 16/9 !important;
+      }
+
+      .method-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .skills-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .contact-grid {
+        grid-template-columns: 1fr;
+        gap: 48px;
+      }
+
+      .event-row {
+        gap: 28px;
+      }
+
+      .footer-inner {
+        flex-direction: column;
+        gap: 16px;
+        text-align: center;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .nav-links {
+        display: none;
+      }
+
+      .hero-title {
+        font-size: clamp(36px, 11vw, 52px);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="cx"></div>
+
+  <!-- ══════════ NAV ══════════ -->
+  <nav id="nav">
+    <div class="nav-inner">
+      <a href="#hero" class="nav-logo">VIC<span>.</span></a>
+      <ul class="nav-links">
+        <li><a href="#story">About</a></li>
+        <li><a href="#works">Works</a></li>
+        <li><a href="#method">Method</a></li>
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <div class="nav-avail">Open to Opportunities</div>
+    </div>
+  </nav>
+
+  <!-- ══════════ HERO ══════════ -->
+  <section id="hero">
+    <div class="hero-img">
+      <img src="images/top-banner.png" alt="hero">
+    </div>
+    <div class="hero-body">
+      <p class="hero-eyebrow">Web Designer · 15 Years</p>
+      <h1 class="hero-title">
+        好的設計<br>不是看起來美，<br>而是讓人有感覺。
+      </h1>
+      <div class="hero-line"></div>
+      <p class="hero-sub">
+        Vic Hsieh · 網頁設計師<br>
+        everrich 昇恆昌 · 八大電視台 · 1111人力銀行
+      </p>
+    </div>
+    <div class="hero-scroll">
+      <div class="hero-scroll-bar"></div>
+      <span>Scroll</span>
+    </div>
+  </section>
+
+  <!-- ══════════ STORY ══════════ -->
+  <section id="story" class="section">
+    <div class="section-inner">
+      <div class="eyebrow rv">About · 關於</div>
+      <div class="story-grid">
+        <div>
+          <h2 class="display rv" style="margin-bottom:48px">三個產業，<br>一件事。</h2>
+          <div class="story-prose rv d1">
+            <p>人力銀行讓我在各方需求之間找到共識，當所有人對「好設計」的定義都不同，找到那個讓所有人點頭的畫面，是技能，也是談判。</p>
+            <p>電視台的那些年。高曝光的媒體環境讓我對品牌一致性的要求變得很龜毛，一個logo、一個色票，在不同螢幕上都要說得過去。</p>
+            <p>現在在電商，更在意的是視覺有沒有辦法真正讓人產生反應。設計不能只是好看，它要有作用。</p>
+            <p>做設計這件事，好玩的地方從來不只是把東西做出來，而是怎麼讓一個概念變成一張讓人有感覺的畫面。</p>
+          </div>
+        </div>
+        <div class="rv-r d1">
+          <ul class="timeline">
+            <li class="tl-item">
+              <div class="tl-yr">2023 – Present</div>
+              <div>
+                <div class="tl-co">everrich 昇恆昌</div>
+                <div class="tl-role">視覺設計師<br>主視覺策劃 · 行銷素材 · Landing page</div>
+                <span class="tl-chip">E-Commerce</span>
+              </div>
+            </li>
+            <li class="tl-item">
+              <div class="tl-yr">2014 - 2023</div>
+              <div>
+                <div class="tl-co">八大電視台</div>
+                <div class="tl-role">網頁設計師<br>UI 設計 · 品牌視覺 · 活動網站 · EDM · 節目視覺</div>
+                <span class="tl-chip">Media · TV</span>
+              </div>
+            </li>
+            <li class="tl-item">
+              <div class="tl-yr">2011 - 2014</div>
+              <div>
+                <div class="tl-co">1111 人力銀行</div>
+                <div class="tl-role">視覺設計師<br>廣告素材 · 跨部門協作</div>
+                <span class="tl-chip">HR Platform</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ WORKS ══════════ -->
+  <section id="works" class="section">
+    <div class="section-inner">
+      <div class="works-header">
+        <div class="rv">
+          <div class="eyebrow">Works · 作品</div>
+          <h2 class="display">設計<br>每一段故事。</h2>
+        </div>
+        <p class="works-note rv d2">
+          點擊任一封面圖，即可瀏覽該專案的完整系列。<br>
+          作品涵蓋主視覺、一頁式網站、IP 角色、行銷素材等不同類型。
+        </p>
+      </div>
+
+      <div class="mosaic rv">
+
+        <!-- ── 欄 1 ── -->
+        <div class="mosaic-col">
+
+          <!-- 1-A 活動主視覺 tall -->
+          <div class="mc" style="aspect-ratio:3/4">
+            <a href="https://images.unsplash.com/photo-1603344797033-f0f4f587ab60?w=1600&auto=format&fit=crop&q=80"
+              class="glightbox mc-trigger" data-gallery="proj-1" data-title="活動主視覺設計"
+              data-description="Campaign Key Visual · 2024">
+              <div class="mc-bg"><img
+                  src="https://images.unsplash.com/photo-1603344797033-f0f4f587ab60?w=900&auto=format&fit=crop&q=70"
+                  alt="活動主視覺"></div>
+              <div class="mc-info">
+                <div class="mc-cat">Campaign Key Visual</div>
+                <div class="mc-name">Key Visual</div>
+                <div class="mc-sub">2024 · Campaign Design</div>
+                <div class="mc-zoom">View Project</div>
+              </div>
+            </a>
+            <a href="https://images.unsplash.com/photo-1561622539-75b4e7b1e91d?w=1600&auto=format&fit=crop&q=80"
+              class="glightbox" data-gallery="proj-1" data-title="活動主視覺 — 02" style="display:none"></a>
+            <a href="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1600&auto=format&fit=crop&q=80"
+              class="glightbox" data-gallery="proj-1" data-title="活動主視覺 — 03" style="display:none"></a>
+            <a href="https://images.unsplash.com/photo-1626785774625-ddcddc3445e9?w=1600&auto=format&fit=crop&q=80"
+              class="glightbox" data-gallery="proj-1" data-title="活動主視覺 — 04" style="display:none"></a>
+          </div>
+
+          <!-- 1-B EDM square -->
+          <div class="mc" style="aspect-ratio:1/1">
+            <a href="https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?w=1400&auto=format&fit=crop&q=80"
+              class="glightbox mc-trigger" data-gallery="proj-4" data-title="EDM 設計"
+              data-description="Email Design · 2024">
+              <div class="mc-bg"><img
+                  src="https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?w=700&auto=format&fit=crop&q=70"
+                  alt="EDM"></div>
+              <div class="mc-info">
+                <div class="mc-cat">Email Marketing</div>
+                <div class="mc-name">EDM</div>
+                <div class="mc-sub">2024 · Email Design</div>
+                <div class="mc-zoom">View Project</div>
+              </div>
+            </a>
+            <a href="https://images.unsplash.com/photo-1563986768609-322da13575f3?w=1400&auto=format&fit=crop&q=80"
+              class="glightbox" data-gallery="proj-4" data-title="EDM — 02" style="display:none"></a>
+            <a href="https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=1400&auto=format&fit=crop&q=80"
+              class="glightbox" data-gallery="proj-4" data-title="EDM — 03" style="display:none"></a>
+          </div>
+
+        </div><!-- /欄1 -->
+
+        <!-- ── 欄 2 ── -->
+        <div class="mosaic-col">
+
+          <!-- 2-A 一頁式網站 landscape -->
+          <div class="mc" style="aspect-ratio:4/3">
+            <a href="https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=1600&auto=format&fit=crop&q=80"
+              class="glightbox mc-trigger" data-gallery="proj-2" data-title="一頁式活動網站"
+              data-description="Event Landing Page · 2024">
+              <div class="mc-bg"><img
+                  src="https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=900&auto=format&fit=crop&q=70"
+                  alt="一頁式活動網站"></div>
+              <div class="mc-info">
+                <div class="mc-cat">Event One-Page Site</div>
+                <div class="mc-name">Landing Page</div>
+                <div class="mc-sub">2024 · Web Design</div>
+                <div class="mc-zoom">View Project</div>
+              </div>
+            </a>
+            <a href="https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?w=1600&auto=format&fit=crop&q=80"
+              class="glightbox" data-gallery="proj-2" data-title="一頁式網站 — 02" style="display:none"></a>
+            <a href="https://images.unsplash.com/photo-1559028012-481c04fa702d?w=1600&auto=format&fit=crop&q=80"
+              class="glightbox" data-gallery="proj-2" data-title="一頁式網站 — 03" style="display:none"></a>
+          </div>
+
+          <!-- 2-B 品牌識別 portrait -->
+          <div class="mc" style="aspect-ratio:3/4">
+            <a href="https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=1600&auto=format&fit=crop&q=80"
+              class="glightbox mc-trigger" data-gallery="proj-5" data-title="品牌視覺識別"
+              data-description="Brand Visual System · 2023">
+              <div class="mc-bg"><img
+                  src="https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=900&auto=format&fit=crop&q=70"
+                  alt="品牌識別"></div>
+              <div class="mc-info">
+                <div class="mc-cat">Brand Visual System</div>
+                <div class="mc-name">Branding</div>
+                <div class="mc-sub">2023 · Brand Identity</div>
+                <div class="mc-zoom">View Project</div>
+              </div>
+            </a>
+            <a href="https://images.unsplash.com/photo-1634942537034-2531766767d1?w=1600&auto=format&fit=crop&q=80"
+              class="glightbox" data-gallery="proj-5" data-title="品牌識別 — 02" style="display:none"></a>
+            <a href="https://images.unsplash.com/photo-1600508774634-4e11d34730e2?w=1600&auto=format&fit=crop&q=80"
+              class="glightbox" data-gallery="proj-5" data-title="品牌識別 — 03" style="display:none"></a>
+            <a href="https://images.unsplash.com/photo-1572044162444-ad60f128bdea?w=1600&auto=format&fit=crop&q=80"
+              class="glightbox" data-gallery="proj-5" data-title="品牌識別 — 04" style="display:none"></a>
+          </div>
+
+        </div><!-- /欄2 -->
+
+        <!-- ── 欄 3 ── -->
+        <div class="mosaic-col">
+
+          <!-- 3-A IP 角色 square -->
+          <div class="mc" style="aspect-ratio:1/1">
+            <a href="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200&auto=format&fit=crop&q=80"
+              class="glightbox mc-trigger" data-gallery="proj-3" data-title="IP 角色設計"
+              data-description="IP Character Design · 2023">
+              <div class="mc-bg"><img
+                  src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=700&auto=format&fit=crop&q=70"
+                  alt="IP 角色" style="object-position:top;"></div>
+              <div class="mc-info">
+                <div class="mc-cat">IP Character Design</div>
+                <div class="mc-name">Character</div>
+                <div class="mc-sub">2023 · Illustration</div>
+                <div class="mc-zoom">View Project</div>
+              </div>
+            </a>
+            <a href="https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=1200&auto=format&fit=crop&q=80"
+              class="glightbox" data-gallery="proj-3" data-title="IP 角色 — 02" style="display:none"></a>
+            <a href="https://images.unsplash.com/photo-1608889825205-eebdb9fc5806?w=1200&auto=format&fit=crop&q=80"
+              class="glightbox" data-gallery="proj-3" data-title="IP 角色 — 03" style="display:none"></a>
+            <a href="https://images.unsplash.com/photo-1629778712393-4f316eee143e?w=1200&auto=format&fit=crop&q=80"
+              class="glightbox" data-gallery="proj-3" data-title="IP 角色 — 04" style="display:none"></a>
+          </div>
+
+          <!-- 3-B 行銷素材 tall -->
+          <div class="mc" style="aspect-ratio:2/3">
+            <a href="https://images.unsplash.com/photo-1542744094-3a31f272c490?w=1400&auto=format&fit=crop&q=80"
+              class="glightbox mc-trigger" data-gallery="proj-6" data-title="行銷推廣素材"
+              data-description="Marketing Material · 2024">
+              <div class="mc-bg"><img
+                  src="https://images.unsplash.com/photo-1542744094-3a31f272c490?w=700&auto=format&fit=crop&q=70"
+                  alt="行銷素材"></div>
+              <div class="mc-info">
+                <div class="mc-cat">Marketing Material</div>
+                <div class="mc-name">Marketing</div>
+                <div class="mc-sub">2024 · Visual Design</div>
+                <div class="mc-zoom">View Project</div>
+              </div>
+            </a>
+            <a href="https://images.unsplash.com/photo-1561070791-2526d30994b5?w=1400&auto=format&fit=crop&q=80"
+              class="glightbox" data-gallery="proj-6" data-title="行銷素材 — 02" style="display:none"></a>
+            <a href="https://images.unsplash.com/photo-1572021335469-31706a17aaef?w=1400&auto=format&fit=crop&q=80"
+              class="glightbox" data-gallery="proj-6" data-title="行銷素材 — 03" style="display:none"></a>
+          </div>
+
+        </div><!-- /欄3 -->
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ METHOD ══════════ -->
+  <section id="method" class="section">
+    <div class="section-inner">
+      <div class="eyebrow rv">Method · 工作方式</div>
+      <h2 class="display rv d1" style="margin-bottom:0">從無，<br>到有。</h2>
+      <div class="method-grid">
+        <div class="mcard rv d1">
+          <div class="mc-num">01</div>
+          <div class="mc-head">概念先行</div>
+          <p class="mc-body">設計開始之前，先弄清楚這個畫面要讓人有什麼感覺。不是「好看」，是某種具體的反應、驚喜、放心、想要、記住。概念對了，執行才有方向。</p>
+        </div>
+        <div class="mcard rv d2">
+          <div class="mc-num">02</div>
+          <div class="mc-head">手繪 × AI 協作</div>
+          <p class="mc-body">草稿能幫助引導 AI 生成的方向；AI 出圖之後，再透過手繪修掉那種冷冰冰的感覺，讓畫面回到想要的狀態。這是這幾年找到的節奏。</p>
+        </div>
+        <div class="mcard rv d3">
+          <div class="mc-num">03</div>
+          <div class="mc-head">跨需求協作</div>
+          <p class="mc-body">三個產業的歷練讓我習慣在不同立場之間找到共識。設計提案不只是交稿，而是找到一個讓所有人都能說「就是這個」的畫面。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ SKILLS ══════════ -->
+  <section id="skills" class="section">
+    <div class="section-inner">
+      <div class="eyebrow rv">Skills · 專長</div>
+      <h2 class="display rv d1" style="margin-bottom:56px">設計專長</h2>
+      <div class="skills-grid">
+        <div class="rv d1">
+          <div class="sg-label">視覺設計能力</div>
+          <div class="sg-tags">
+            <span class="sg-tag hi">海報視覺</span><span class="sg-tag hi">活動主視覺</span>
+            <span class="sg-tag hi">品牌識別</span><span class="sg-tag hi">各式封面設計</span>
+            <span class="sg-tag hi">廣告設計概念</span><span class="sg-tag">使用者介面設計</span>
+            <span class="sg-tag">EDM</span><span class="sg-tag">Logo 設計</span>
+            <span class="sg-tag">影像合成</span><span class="sg-tag">照片精修</span>
+            <span class="sg-tag">IP 角色設計</span><span class="sg-tag">行銷推廣素材</span>
+          </div>
+        </div>
+        <div class="rv d2">
+          <div class="sg-label">工具 · 技術</div>
+          <div class="sg-tags">
+            <span class="sg-tag hi">Photoshop</span><span class="sg-tag hi">Illustrator</span>
+            <span class="sg-tag hi">AI 圖像生成工具</span><span class="sg-tag hi">手繪技巧</span>
+            <span class="sg-tag">多媒體影像處理</span><span class="sg-tag">網頁軟體操作</span>
+            <span class="sg-tag">網頁語法撰寫</span><span class="sg-tag">電腦繪圖軟體</span>
+          </div>
+          <div class="sg-label" style="margin-top:36px">產業經驗</div>
+          <div class="sg-tags">
+            <span class="sg-tag">電視媒體</span><span class="sg-tag">電商平台</span>
+            <span class="sg-tag">人力資源平台</span><span class="sg-tag">零售品牌</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ EVENT ══════════ -->
+  <section id="event" class="section">
+    <div class="event-deco"></div>
+    <div class="section-inner" style="position:relative">
+      <div class="eyebrow rv">Portfolio Showcase</div>
+      <h2 class="event-title rv d1">Form<br>Feeling.</h2>
+      <p class="event-desc rv d2">
+        關於設計如何引發共鳴<br>
+        主視覺、角色、網站、素材，都在這裡。<br>
+        歡迎面試或合作邀約。
+      </p>
+      <div class="event-row rv d2">
+        <div>
+          <div class="ev-key">Format</div>
+          <div class="ev-val">Online Portfolio</div>
+        </div>
+        <div>
+          <div class="ev-key">Location</div>
+          <div class="ev-val">Taiwan</div>
+        </div>
+        <div>
+          <div class="ev-key">Open to</div>
+          <div class="ev-val">Interview · Collab</div>
+        </div>
+      </div>
+      <a href="#contact" class="btn-ink rv d3"><span>與我聯絡 →</span></a>
+    </div>
+  </section>
+
+  <!-- ══════════ CONTACT ══════════ -->
+  <section id="contact" class="section">
+    <div class="section-inner">
+      <div class="contact-grid">
+        <div class="rv">
+          <div class="eyebrow">Contact · 聯絡</div>
+          <h2 class="display" style="color:#f0ebe3;margin-bottom:36px">當面聊<br>或許更有趣。</h2>
+          <p class="contact-prose">
+            對設計還是有很多話想說。<br>
+            如果你的專案需要一個真正讓人有感覺的視覺，我很樂意聊聊。
+          </p>
+          <a href="mailto:xiemangxin@gmail.com" class="contact-email">xiemangxin@gmail.com</a>
+        </div>
+        <div class="rv d2">
+          <div class="form-f"><input type="text" placeholder=" " id="fn"><label for="fn">姓名 / Name</label></div>
+          <div class="form-f"><input type="email" placeholder=" " id="fe"><label for="fe">Email</label></div>
+          <div class="form-f"><input type="text" placeholder=" " id="fc"><label for="fc">公司 / 專案</label></div>
+          <div class="form-f"><textarea placeholder=" " id="fm"></textarea><label for="fm">說說你的需求</label></div>
+          <button class="btn-send">送出 Send</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ FOOTER ══════════ -->
+  <footer>
+    <div class="footer-inner">
+      <span class="footer-copy">© 2026 Vic Hsieh · Web Designer · Since 2010</span>
+      <div class="footer-links">
+        <a href="#">Behance</a>
+        <a href="#">Instagram</a>
+        <a href="#">LinkedIn</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    /* ── Cursor dot only (no ring) ── */
+    const cx = document.getElementById('cx');
+    let mx = 0, my = 0;
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      cx.style.left = mx + 'px';
+      cx.style.top = my + 'px';
+    });
+    /* Hide dot when outside window */
+    document.addEventListener('mouseleave', () => cx.style.opacity = '0');
+    document.addEventListener('mouseenter', () => cx.style.opacity = '1');
+
+    /* ── Nav scroll shadow ── */
+    const navEl = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      navEl.classList.toggle('scrolled', window.scrollY > 40);
+    });
+
+    /* ── Reveal on scroll ── */
+    const io = new IntersectionObserver(entries => {
+      entries.forEach((e, i) => {
+        if (e.isIntersecting) {
+          setTimeout(() => e.target.classList.add('in'), i * 60);
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: .1 });
+    document.querySelectorAll('.rv,.rv-l,.rv-r').forEach(el => io.observe(el));
+
+    /* ── GLightbox — restore normal cursor inside lightbox ── */
+    const lb = GLightbox({
+      selector: '.glightbox',
+      touchNavigation: true,
+      loop: true,
+      openEffect: 'fade',
+      closeEffect: 'fade',
+      slideEffect: 'slide',
+    });
+    lb.on('open', () => {
+      /* Lightbox has its own UI — show system cursor there, hide our dot */
+      document.body.style.cursor = 'auto';
+      cx.style.display = 'none';
+    });
+    lb.on('close', () => {
+      document.body.style.cursor = 'none';
+      cx.style.display = 'block';
+    });
+  </script>
+</body>
+
+</html>
